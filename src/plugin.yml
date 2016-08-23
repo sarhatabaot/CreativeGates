@@ -1,6 +1,6 @@
 main: com.massivecraft.creativegates.CreativeGates
 name: CreativeGates
-version: 2.8.6_berrycraft-edit
+version: 2.8.20-berrycraft
 website: https://www.massivecraft.com/creativegates
 authors: [Cayorion]
 description: §eCreativeGates is a portal plugin. §aCayorion §efrom the minecraft server §aMassiveCraft §eis the lead programmer. Feel free to visit us at §bhttps://www.massivecraft.com
@@ -33,7 +33,7 @@ permissions:
       creativegates.cg.world.delete: true
       creativegates.cg.version: true
       creativegates.limited: false
-      creativegates.random: false
+      creativegates.random: true
 # -------------------------------------------- #
 # KITS
 # -------------------------------------------- #
@@ -65,12 +65,3 @@ permissions:
     default: true
     children:
       creativegates.kit.rank0: true
-
-
-### What is this 'berrycraft-edit' ###
-# This is a specially edited version of CreativeGates,
-# edited to the needs of the BerryCraft server ( berrycraft.me ), by Dragoboss
-# 
-# What exactly did I edit?
-# I made a new config entry that allows one to set a limit of portals
-# per Permissions Group (via Vault!)

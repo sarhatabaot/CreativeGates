@@ -11,17 +11,6 @@ public enum Perm implements Identified
 	// ENUM
 	// -------------------------------------------- //
 	
-<<<<<<< HEAD
-	CREATE("create"),
-	USE("use"),
-	CG("cg"),
-	CG_WORLD("cg.world"),
-	CG_WORLD_LIST("cg.world.list"),
-	CG_WORLD_DELETE("cg.world.delete"),
-	CG_VERSION("cg.version"),
-        LIMITED("limited"),
-        RANDOM("random"),
-=======
 	CREATE,
 	USE,
 	CG,
@@ -29,7 +18,8 @@ public enum Perm implements Identified
 	CG_WORLD_LIST,
 	CG_WORLD_DELETE,
 	CG_VERSION,
->>>>>>> upstream/master
+        LIMITED,
+        RANDOM
 	
 	// END OF LIST
 	;
@@ -53,16 +43,10 @@ public enum Perm implements Identified
 	// -------------------------------------------- //
 	// HAS
 	// -------------------------------------------- //
-	
-<<<<<<< HEAD
-	public boolean has(CommandSender sender, boolean informSenderIfNot)
-	{  
-		return PermUtil.has(sender, this.node, informSenderIfNot);
-=======
+
 	public boolean has(Permissible permissible, boolean verboose)
 	{
 		return PermissionUtil.hasPermission(permissible, this, verboose);
->>>>>>> upstream/master
 	}
 	
 	public boolean has(Permissible permissible)

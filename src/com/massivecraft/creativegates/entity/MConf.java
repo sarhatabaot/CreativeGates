@@ -40,14 +40,7 @@ public class MConf extends Entity<MConf>
 
 	public void updatePerms()
 	{
-<<<<<<< HEAD
-		PermUtil.get(false, true, Perm.CREATE.node, "create a gate", this.permissionDefaultCreate);
-		PermUtil.get(false, true, Perm.USE.node, "use a gate", this.permissionDefaultUse);
-        }
-=======
 		PermissionUtil.getPermission(false, true, Perm.CREATE.getId(), "create a gate", this.permissionDefaultCreate);
 		PermissionUtil.getPermission(false, true, Perm.USE.getId(), "use a gate", this.permissionDefaultUse);
-	}
->>>>>>> upstream/master
-	
+	}	
 }

@@ -35,19 +35,16 @@ public class CreativeGates extends MassivePlugin
 	
 	private static CreativeGates i;
 	public static CreativeGates get() { return i; }
-<<<<<<< HEAD
-	public CreativeGates() { CreativeGates.i = this; }
+        
         Permission permission = null;
         private Player player;
-=======
-	public CreativeGates()
-	{
+        
+	public CreativeGates() {
 		CreativeGates.i = this;
 		
 		// Version Synchronized
 		this.setVersionSynchronized(true);
 	}
->>>>>>> upstream/master
 	
 	// -------------------------------------------- //
 	// FIELDS
@@ -74,15 +71,8 @@ public class CreativeGates extends MassivePlugin
 	@Override
 	public void onEnableInner()
 	{
-<<<<<<< HEAD
                 setupPermissions();
-		if ( ! preEnable()) return;
-		
-		// Version Synchronized
-		this.setVersionSynchronized(true);
-		
-=======
->>>>>>> upstream/master
+
 		// Initialize Aspects
 		this.aspect = AspectColl.get().get(Const.ASPECT, true);
 		this.aspect.register();

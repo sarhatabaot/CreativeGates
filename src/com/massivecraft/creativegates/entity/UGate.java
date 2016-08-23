@@ -27,8 +27,6 @@ import com.massivecraft.massivecore.teleport.DestinationSimple;
 import com.massivecraft.massivecore.util.IdUtil;
 import com.massivecraft.massivecore.util.SmokeUtil;
 import com.massivecraft.massivecore.util.Txt;
-import java.util.HashSet;
-import java.util.Random;
 import org.bukkit.World.Environment;
 
 public class UGate extends Entity<UGate>
@@ -193,8 +191,7 @@ public class UGate extends Entity<UGate>
 		List<UGate> gateChain = this.getGateChain();
 		
 		String message = null;
-		
-<<<<<<< HEAD
+
                 if (this.getType().equals("random")) {
                     if (randomTransport(player, uconf.getRandomRadius())) {
                         damageDisabled.remove(player.getName());
@@ -208,7 +205,7 @@ public class UGate extends Entity<UGate>
 
                         try
                         {
-                            Mixin.teleport(player, destination, 0);
+                            MixinTeleport.get().teleport(player, destination, 0);
                             this.setUsedMillis(System.currentTimeMillis());
                             this.fxKitUse(player);
                             return;
@@ -222,32 +219,8 @@ public class UGate extends Entity<UGate>
                     message = Txt.parse("<i>This gate does not seem to lead anywhere.");
                     player.sendMessage(message);
                 }
-=======
-		for (UGate ugate : gateChain)
-		{
-			if ( ! ugate.isExitEnabled()) continue;
-			
-			PS destinationPs = ugate.getExit();
-			String destinationDesc = (MConf.get().teleportationMessageActive ? "the gate destination" : "");
-			Destination destination = new DestinationSimple(destinationPs, destinationDesc);
-			
-			try
-			{
-				MixinTeleport.get().teleport(player, destination, 0);
-				this.setUsedMillis(System.currentTimeMillis());
-				this.fxKitUse(player);
-				return;
-			}
-			catch (TeleporterException e)
-			{
-				player.sendMessage(e.getMessage());
-			}
-		}
-		
-		message = Txt.parse("<i>This gate does not seem to lead anywhere.");
-		player.sendMessage(message);
->>>>>>> upstream/master
-	}
+        }
+
         public boolean randomTransport(Player player, double radius){
             Block randBlock = getRandBlock(player, radius);
             
