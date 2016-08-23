@@ -1,5 +1,6 @@
 package com.massivecraft.creativegates;
 
+import com.google.common.collect.Lists;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +41,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.massivecraft.creativegates.entity.UConf;
 import com.massivecraft.creativegates.entity.UConfColls;
 import com.massivecraft.creativegates.entity.UGate;
+import com.massivecraft.creativegates.entity.UGateColl;
 import com.massivecraft.creativegates.entity.UGateColls;
 import com.massivecraft.massivecore.MassiveCore;
 import com.massivecraft.massivecore.ps.PS;
@@ -47,9 +49,19 @@ import com.massivecraft.massivecore.util.IdUtil;
 import com.massivecraft.massivecore.util.InventoryUtil;
 import com.massivecraft.massivecore.util.MUtil;
 import com.massivecraft.massivecore.util.Txt;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import static org.bukkit.Bukkit.getServer;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class MainListener implements Listener
 {
+        UGate ugateClass = new UGate();
+        CreativeGates creativeGates;
 	// -------------------------------------------- //
 	// INSTANCE & CONSTRUCT
 	// -------------------------------------------- //
@@ -65,6 +77,7 @@ public class MainListener implements Listener
 	public void activate()
 	{
 		Bukkit.getPluginManager().registerEvents(this, CreativeGates.get());
+                creativeGates = CreativeGates.get();
 	}
 	
 	public void deactivate()
@@ -118,18 +131,18 @@ public class MainListener implements Listener
 	// PORTAL
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void stabilizePortalContent(BlockPhysicsEvent event)
-    {
-		// If a portal block is running physics ...
-		Block block = event.getBlock();
-		if (block.getType() != Material.PORTAL) return;
-				
-		// ... and we are filling or that block is stable according to our algorithm ...
-		if ( ! (CreativeGates.get().isFilling() || isPortalBlockStable(block))) return;
-		
-		// ... then block the physics to stop the portal from disappearing.
-		event.setCancelled(true);
-    }
+        public void stabilizePortalContent(BlockPhysicsEvent event)
+        {
+                    // If a portal block is running physics ...
+                    Block block = event.getBlock();
+                    if (block.getType() != Material.PORTAL) return;
+
+                    // ... and we are filling or that block is stable according to our algorithm ...
+                    if ( ! (CreativeGates.get().isFilling() || isPortalBlockStable(block))) return;
+
+                    // ... then block the physics to stop the portal from disappearing.
+                    event.setCancelled(true);
+        }
 	
 	public static boolean isPortalBlockStable(Block block)
 	{
@@ -221,19 +234,46 @@ public class MainListener implements Listener
 		event.setCancelled(true);
 	}
 	
+        // -------------------------------------------- //
+        // PREVENT DAMAGE FROM GATES (in case of lava gate for example)
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void preventGateDamage(EntityDamageEvent event) {
+            
+            // If entity is a player....
+            Entity player = event.getEntity();
+            if (!player.getType().equals(EntityType.PLAYER)) return;
+            
+            // If damage is caused in combination with a 'random teleport' action
+            if (ugateClass.damageDisabled.contains(player.getName())) {
+                event.setCancelled(true);
+            } else {
+                // if damage is caused by Portal materials or results of touching those
+                ArrayList<DamageCause> damageList = Lists.newArrayList(DamageCause.LAVA, DamageCause.FIRE, DamageCause.FIRE_TICK);
+                if (damageList.contains(event.getCause())) {
+
+                // ... If there is a gate at the damage location ...
+                boolean ugate = isGateNearby(player.getLocation().getBlock());
+                if (!ugate) {
+                    return;
+                }
+
+                    player.setFireTicks(0);
+                    event.setCancelled(true);
+                }
+            } 
+        }
+        // -------------------------------------------- //
+        
 	// -------------------------------------------- //
 	// USE GATE
 	// -------------------------------------------- //
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void useGate(PlayerMoveEvent event)
+        public void useGate(PlayerMoveEvent event)
 	{
 		// If a player ...
 		Player player = event.getPlayer();
-		if (MUtil.isntPlayer(player)) return;
-		
-		// ... is moving from one block to another ...
-		if (MUtil.isSameBlock(event)) return;
+		if (!MUtil.isPlayer(player)) return;
 		
 		// ... and there is a gate in the new block ...
 		UGate ugate = UGate.get(event.getTo());
@@ -268,7 +308,14 @@ public class MainListener implements Listener
 		if (player.isDead()) return;
 		
 		// ... then transport the player.
-		ugate.transport(player);
+		if (ugate.getType().equals("random")) {
+                    if (ugate.randomTransport(player, uconf.getRandomRadius())) {
+                        ugateClass.damageDisabled.remove(player);
+                    } 
+                    ugate.randomTransport(player, uconf.getRandomRadius());
+                } else {
+                    ugate.transport(player);
+                }
 	}
 	
 	// -------------------------------------------- //
@@ -381,6 +428,8 @@ public class MainListener implements Listener
 			material != uconf.getMaterialSecret()
 			&&
 			material != uconf.getMaterialCreate()
+                        &&
+                        material != uconf.getItemRandom()
 		)
 		{
 			return;
@@ -438,7 +487,51 @@ public class MainListener implements Listener
 				player.sendMessage(message);
 				return;
 			}
-			
+                        
+                        if ( uconf.getLimitranks() == true) {
+                            // Breaking and Editing for BerryCraft: checking how many gates one has to apply gates limit per rank
+                            if ( Perm.LIMITED.has(player, false)) {
+                                if (getServer().getPluginManager().getPlugin("Vault") == null) {
+                                    System.out.print("Dependency VAULT is missing, required to limit portals per rank!!!");
+                                    return;
+                                }
+                                List<String> lines = new ArrayList<String>();
+
+                                // count how many gates the player owns
+                                Map<String, Integer> player2count = new HashMap<String, Integer>();
+                                int amount = 0;
+                                String playerid = event.getPlayer().getUniqueId().toString();
+
+                                for (UGateColl coll : UGateColls.get().getColls())
+                                {
+                                        for (UGate gate : coll.getAll())
+                                        {
+                                                Integer count = player2count.get(playerid);
+                                                if (count == null) count = 0;
+                                                if (gate.getCreatorId().toString().equals(playerid)) {
+                                                    count++;
+                                                    amount++;
+                                                }
+
+                                                player2count.put(playerid, count);
+                                        }
+                                }
+                                Map<String, Integer> LimitedRanks = uconf.getLimitedranks();
+                                for (Entry<String, Integer> entry : LimitedRanks.entrySet())
+                                {
+                                        String group = entry.getKey();
+                                        Integer allowCount = entry.getValue();
+                                        if (creativeGates.getPrimary(player).equals(group)) {
+                                            if (amount >= allowCount) {
+                                                message = Txt.parse("<b>You have already reached your limit of %s portals!<b>.", allowCount);
+                                                player.sendMessage(message);
+                                                return;
+                                            }
+                                        }
+                                }
+                            }
+                        }
+                        
 			// ... calculate the exit location ...
 			PS exit = PS.valueOf(player.getLocation());
 			exit = exit.withPitch(0F);
@@ -457,8 +550,9 @@ public class MainListener implements Listener
 			newGate.setNetworkId(newNetworkId);
 			newGate.setExit(exit);
 			newGate.setCoords(coords);
+			newGate.setType("normal");
 			
-			// ... set the air blocks to portal material ...
+                        // ... set the air blocks to portal material ...
 			newGate.fill();
 			
 			// ... run fx ...
@@ -507,7 +601,69 @@ public class MainListener implements Listener
 				player.sendMessage(message);
 				
 			}
-		}
+		} else if(material == uconf.getItemRandom()){
+                    // We are creating a special admin-only portal that creates a random teleport destination
+                
+                			// ... check permission node ...
+			if ( ! Perm.RANDOM.has(player, true)) return;
+			
+			// ... check if the place is occupied ...
+			if (currentGate != null)
+			{
+				message = Txt.parse("<b>There is no room for a new gate since there already is one here.");
+				player.sendMessage(message);
+				return;
+			}
+			
+			// ... we make a random name that nobody will ever re-use ...
+			String newNetworkId = UUID.randomUUID().toString();
+			
+			// ... perform the flood fill ...
+			Block startBlock = clickedBlock.getRelative(event.getBlockFace());
+			Entry<GateOrientation, Set<Block>> gateFloodInfo = FloodUtil.getGateFloodInfo2(startBlock);
+			if (gateFloodInfo == null)
+			{
+				message = Txt.parse("<b>There is no frame for the gate, or it's too big.", Txt.getMaterialName(material));
+				player.sendMessage(message);
+				return;
+			}
+			
+			GateOrientation gateOrientation = gateFloodInfo.getKey();
+			Set<Block> blocks = gateFloodInfo.getValue();
+                        
+                        // ... Don't need a special material block for these portals ...
+                        // ... These portals are admin-only, so no rank limitations ...
+                        
+			// ... calculate the exit location ...
+			PS exit = PS.valueOf(player.getLocation());
+			exit = exit.withPitch(0F);
+			exit = exit.withYaw(gateOrientation.getExitYaw(exit, PS.valueOf(blocks.iterator().next())));
+			
+			// ... calculate the coords ...
+			Set<PS> coords = new HashSet<PS>();
+			for (Block block : blocks)
+			{
+				coords.add(PS.valueOf(block).withWorld(null));
+			}
+			
+			// ... create the gate ...
+			UGate newGate = UGateColls.get().get(startBlock).create();
+			newGate.setCreatorId(IdUtil.getId(player));
+			newGate.setNetworkId(newNetworkId);
+			newGate.setExit(exit);
+			newGate.setCoords(coords);
+                        newGate.setType("random");
+			
+			// ... set the air blocks to portal material ...
+			newGate.fill();
+			
+			// ... run fx ...
+			newGate.fxKitCreate(player);
+			
+			// ... fx-inform the player ...
+			message = Txt.parse("<g>A \"<h>%s<g>\" gate takes form in front of you.", newGate.getNetworkId());
+			player.sendMessage(message);
+                }
 		else
 		{
 			// ... we are trying to do something else that create ...

@@ -17,3 +17,6 @@
 
 # Mac filesystem dust
 .DS_Store
+build.xml
+manifest.mf
+.gitignore

@@ -42,6 +42,6 @@ public class MConf extends Entity<MConf>
 	{
 		PermUtil.get(false, true, Perm.CREATE.node, "create a gate", this.permissionDefaultCreate);
 		PermUtil.get(false, true, Perm.USE.node, "use a gate", this.permissionDefaultUse);
-	}
+        }
 	
 }

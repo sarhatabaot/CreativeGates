@@ -17,6 +17,9 @@ import com.massivecraft.massivecore.Aspect;
 import com.massivecraft.massivecore.AspectColl;
 import com.massivecraft.massivecore.MassivePlugin;
 import com.massivecraft.massivecore.Multiverse;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class CreativeGates extends MassivePlugin
 {
@@ -33,6 +36,8 @@ public class CreativeGates extends MassivePlugin
 	private static CreativeGates i;
 	public static CreativeGates get() { return i; }
 	public CreativeGates() { CreativeGates.i = this; }
+        Permission permission = null;
+        private Player player;
 	
 	// -------------------------------------------- //
 	// FIELDS
@@ -63,6 +68,7 @@ public class CreativeGates extends MassivePlugin
 	@Override
 	public void onEnable()
 	{
+                setupPermissions();
 		if ( ! preEnable()) return;
 		
 		// Version Synchronized
@@ -122,5 +128,16 @@ public class CreativeGates extends MassivePlugin
 	{
 		return isVoid(block.getType());
 	}
-	
+        private boolean setupPermissions() {
+            RegisteredServiceProvider<Permission> permissionProvider = getServer()
+                .getServicesManager().getRegistration(
+                        net.milkbowl.vault.permission.Permission.class);
+            if (permissionProvider != null) {
+                permission = permissionProvider.getProvider();
+            }
+            return (permission != null);
+        }
+        public String getPrimary(Player player) {
+            return permission.getPrimaryGroup(player);
+        }
 }

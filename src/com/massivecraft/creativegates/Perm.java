@@ -17,6 +17,8 @@ public enum Perm
 	CG_WORLD_LIST("cg.world.list"),
 	CG_WORLD_DELETE("cg.world.delete"),
 	CG_VERSION("cg.version"),
+        LIMITED("limited"),
+        RANDOM("random"),
 	
 	// END OF LIST
 	;
@@ -41,7 +43,7 @@ public enum Perm
 	// -------------------------------------------- //
 	
 	public boolean has(CommandSender sender, boolean informSenderIfNot)
-	{
+	{  
 		return PermUtil.has(sender, this.node, informSenderIfNot);
 	}
 	

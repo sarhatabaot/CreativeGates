@@ -37,7 +37,12 @@ public class UConf extends Entity<UConf>
 		this.setMaterialInspect(that.getMaterialInspect());
 		this.setMaterialSecret(that.getMaterialSecret());
 		this.setMaterialMode(that.getMaterialMode());
-		
+                this.setLimitranks(that.getLimitranks());
+                this.setLimitedranks(that.getLimitedranks());
+                this.setItemRandom(that.getItemRandom());
+                this.setMaterialRandom(that.getMaterialRandom());
+                this.setRandomRadius(that.getRandomRadius());
+                
 		return this;
 	}
 	
@@ -89,6 +94,29 @@ public class UConf extends Entity<UConf>
 	
 	private Material materialMode = Material.BLAZE_ROD;
 	public Material getMaterialMode() { return this.materialMode; }
-	public void setMaterialMode(Material materialMode) { this.materialMode = materialMode; this.changed(); }
+	public void setMaterialMode(Material materialMode) { this.materialMode = materialMode; this.changed(); 
+        
+        }
+        private boolean limitranks = true;
+	public boolean getLimitranks() { return this.limitranks; }
+	public void setLimitranks(boolean limitranks) { this.limitranks = limitranks; this.changed(); }
+	
+	private Map<String, Integer> limitedranks = MUtil.map(
+		"rank0", 2
+	);
+	public Map<String, Integer> getLimitedranks() { return new HashMap<String, Integer>(this.limitedranks); }
+	public void setLimitedranks(Map<String, Integer> limitedranks) { this.limitedranks = new HashMap<String, Integer>(limitedranks); this.changed(); }
+
+	private Material itemRandom = Material.FIREBALL;
+	public Material getItemRandom() { return this.itemRandom; }
+	public void setItemRandom(Material itemRandom) { this.itemRandom = itemRandom; this.changed(); }
+
+        private Material randomPortalMaterial = Material.STATIONARY_WATER;
+	public Material getMaterialRandom() { return this.randomPortalMaterial; }
+	public void setMaterialRandom(Material randomPortalMaterial) { this.randomPortalMaterial = randomPortalMaterial; this.changed(); }
+
+        private int randomPortalRadius = 10000;
+	public int getRandomRadius() { return this.randomPortalRadius; }
+	public void setRandomRadius(int randomPortalRadius) { this.randomPortalRadius = randomPortalRadius; this.changed(); }
 	
 }

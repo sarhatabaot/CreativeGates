@@ -56,6 +56,30 @@ public class FloodUtil
 		
 		return new SimpleEntry<GateOrientation, Set<Block>>(gateOrientaion, blocks);
 	}
+        
+        public static Entry<GateOrientation, Set<Block>> getGateFloodInfo2(Block startBlock)
+	{
+		UConf uconf = UConf.get(startBlock);
+		
+		// Search for content WE and NS
+		GateOrientation gateOrientaion = null;
+		Set<Block> blocksNEWS = getFloodBlocks(startBlock, new HashSet<Block>(), GateOrientation.NEWS.expandFaces, uconf.getMaxarea());
+		// Figure out dir and content... or throw no frame fail. 
+		Set<Block> blocks;
+				blocks = blocksNEWS;
+				gateOrientaion = GateOrientation.NEWS;
+                if (blocksNEWS != null) {			
+                    blocks = blocksNEWS;
+                    gateOrientaion = GateOrientation.NEWS;
+                } else {
+			return null;
+		}
+		
+		// Add in the frame as well.
+		blocks = expandedByOne(blocks, gateOrientaion.expandFaces);
+		
+		return new SimpleEntry<GateOrientation, Set<Block>>(gateOrientaion, blocks);
+	}
 	
 	public static Set<Block> getFloodBlocks(Block startBlock, Set<Block> foundBlocks, Set<BlockFace> expandFaces, int maxarea)
 	{
