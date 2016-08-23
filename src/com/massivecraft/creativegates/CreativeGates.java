@@ -35,9 +35,19 @@ public class CreativeGates extends MassivePlugin
 	
 	private static CreativeGates i;
 	public static CreativeGates get() { return i; }
+<<<<<<< HEAD
 	public CreativeGates() { CreativeGates.i = this; }
         Permission permission = null;
         private Player player;
+=======
+	public CreativeGates()
+	{
+		CreativeGates.i = this;
+		
+		// Version Synchronized
+		this.setVersionSynchronized(true);
+	}
+>>>>>>> upstream/master
 	
 	// -------------------------------------------- //
 	// FIELDS
@@ -57,23 +67,22 @@ public class CreativeGates extends MassivePlugin
 	public boolean isFilling() { return this.filling; }
 	public void setFilling(boolean filling) { this.filling = filling; }
 	
-	// Commands
-	private CmdCg cmdCg;
-	public CmdCg getCmdCg() { return this.cmdCg; }
-	
 	// -------------------------------------------- //
 	// OVERRIDE
 	// -------------------------------------------- //
 	
 	@Override
-	public void onEnable()
+	public void onEnableInner()
 	{
+<<<<<<< HEAD
                 setupPermissions();
 		if ( ! preEnable()) return;
 		
 		// Version Synchronized
 		this.setVersionSynchronized(true);
 		
+=======
+>>>>>>> upstream/master
 		// Initialize Aspects
 		this.aspect = AspectColl.get().get(Const.ASPECT, true);
 		this.aspect.register();
@@ -82,18 +91,22 @@ public class CreativeGates extends MassivePlugin
 			"<i>What the config options are set to."
 		);
 
-		// Collections
+		// Index
 		this.getIndex().clear();
-		MConfColl.get().init();
-		UConfColls.get().init();
-		UGateColls.get().init();
 		
-		// Commands
-		this.cmdCg = new CmdCg();
-		this.cmdCg.register(this);
+		// Activate
+		this.activate(
+			// Coll
+			MConfColl.class,
+			UConfColls.class,
+			UGateColls.class,
 		
-		// Setup Listeners
-		MainListener.get().activate();
+			// Engine
+			EngineMain.class,
+			
+			// Command
+			CmdCg.class
+		);
 	
 		// Schedule a permission update.
 		// Possibly it will be useful due to the way Bukkit loads permissions.
@@ -104,8 +117,6 @@ public class CreativeGates extends MassivePlugin
 				MConf.get().updatePerms();
 			}
 		});
-		
-		postEnable();
 	}
 	
 	@Override
