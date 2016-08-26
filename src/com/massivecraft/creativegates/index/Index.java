@@ -3,10 +3,9 @@ package com.massivecraft.creativegates.index;
 import com.massivecraft.creativegates.entity.UGate;
 import com.massivecraft.massivecore.ps.PS;
 
-public interface Index
-{
-	public void add(UGate ugate);
-	public void remove(UGate ugate);
-	public void clear();
-	public UGate get(PS ps);
+public interface Index {
+    public void add(UGate ugate);
+    public void remove(UGate ugate);
+    public void clear();
+    public UGate get(PS ps);
 }

@@ -12,63 +12,51 @@ import com.massivecraft.creativegates.NetworkIdEqualsPredicate;
 import com.massivecraft.massivecore.ps.PS;
 import com.massivecraft.massivecore.store.Coll;
 
-public class UGateColl extends Coll<UGate>
-{
-	// -------------------------------------------- //
-	// CONSTRUCT
-	// -------------------------------------------- //
+public class UGateColl extends Coll<UGate> {
+    // -------------------------------------------- //
+    // CONSTRUCT
+    // -------------------------------------------- //
+    public UGateColl(String name) {
+        super(name);
+    }
 	
-	public UGateColl(String name)
-	{
-		super(name);
-	}
-	
-	// -------------------------------------------- //
-	// STACK TRACEABILITY
-	// -------------------------------------------- //
-	
-	@Override
-	public void onTick()
-	{
-		super.onTick();
-	}
-	
-	// -------------------------------------------- //
-	// OVERRIDE
-	// -------------------------------------------- //
-	
-	@Override
-	public String fixId(Object oid)
-	{
-		if (oid instanceof Block)
-		{
-			oid = PS.valueOf((Block)oid);
-		}
-		
-		if (oid instanceof Location)
-		{
-			oid = PS.valueOf((Location)oid);
-		}
-		
-		if (oid instanceof PS)
-		{
-			UGate gate = CreativeGates.get().getIndex().get((PS)oid);
-			if (gate == null) return null;
-			return gate.getId();
-		}
-		
-		return super.fixId(oid);
-	}
-	
-	// -------------------------------------------- //
-	// EXTRAS
-	// -------------------------------------------- //
-	
-	public List<UGate> getGateChain(String networkId)
-	{
-		List<UGate> ret = new ArrayList<UGate>();
-		ret.addAll(this.getAll(new NetworkIdEqualsPredicate(networkId), ExitComparator.get()));
-		return ret;
-	}
+    // -------------------------------------------- //
+    // STACK TRACEABILITY
+    // -------------------------------------------- //
+    @Override
+    public void onTick() {
+        super.onTick();
+    }
+
+    // -------------------------------------------- //
+    // OVERRIDE
+    // -------------------------------------------- //
+    @Override
+    public String fixId(Object oid) {
+        if (oid instanceof Block) {
+            oid = PS.valueOf((Block)oid);
+        }
+
+        if (oid instanceof Location) {
+            oid = PS.valueOf((Location)oid);
+        }
+
+        if (oid instanceof PS) {
+            UGate gate = CreativeGates.get().getIndex().get((PS)oid);
+            if (gate == null) return null;
+            return gate.getId();
+        }
+
+        return super.fixId(oid);
+    }
+
+    // -------------------------------------------- //
+    // EXTRAS
+    // -------------------------------------------- //
+    public List<UGate> getGateChain(String networkId) {
+        List<UGate> ret = new ArrayList<UGate>();
+        ret.addAll(this.getAll(new NetworkIdEqualsPredicate(networkId), ExitComparator.get()));
+        return ret;
+    }
 
 }
