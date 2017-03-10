@@ -1,12 +1,12 @@
 package com.massivecraft.creativegates.cmd;
 
 import java.util.List;
-
-import com.massivecraft.creativegates.CreativeGates;
 import com.massivecraft.creativegates.Perm;
 import com.massivecraft.creativegates.entity.MConf;
+import com.massivecraft.creativegates.cmd.CmdCgConfig;
+import com.massivecraft.creativegates.cmd.CmdCgVersion;
+import com.massivecraft.creativegates.cmd.CmdCgWorld;
 import com.massivecraft.massivecore.command.MassiveCommand;
-import com.massivecraft.massivecore.command.MassiveCommandVersion;
 import com.massivecraft.massivecore.command.requirement.RequirementHasPerm;
 
 public class CmdCg extends MassiveCommand {
@@ -20,14 +20,16 @@ public class CmdCg extends MassiveCommand {
     // FIELDS
     // -------------------------------------------- //
     public CmdCgWorld cmdCgWorld = new CmdCgWorld();
-    public MassiveCommandVersion cmdCgVersion = new MassiveCommandVersion(CreativeGates.get()).setAliases("v", "version").addRequirements(RequirementHasPerm.get(Perm.CG_VERSION));
-
+    public CmdCgConfig cmdCgConfig = new CmdCgConfig();
+    public CmdCgVersion cmdCgVersion = new CmdCgVersion();
+	
     // -------------------------------------------- //
     // CONSTRUCT
     // -------------------------------------------- //
     public CmdCg() {
         // Children
         this.addChild(this.cmdCgWorld);
+        this.addChild(this.cmdCgConfig);
         this.addChild(this.cmdCgVersion);
 
         // Requirements
@@ -41,5 +43,4 @@ public class CmdCg extends MassiveCommand {
     public List<String> getAliases() {
         return MConf.get().aliasesCg;
     }
-	
 }
