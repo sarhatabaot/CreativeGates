@@ -37,6 +37,7 @@ public class UConf extends Entity<UConf> {
         this.setItemRandom(that.getItemRandom());
         this.setMaterialRandom(that.getMaterialRandom());
         this.setRandomRadius(that.getRandomRadius());
+        this.setServerName(that.getServerName());
 
         return this;
     }
@@ -111,4 +112,8 @@ public class UConf extends Entity<UConf> {
     private int randomPortalRadius = 10000;
     public int getRandomRadius() { return this.randomPortalRadius; }
     public void setRandomRadius(int randomPortalRadius) { this.randomPortalRadius = randomPortalRadius; this.changed(); }
+
+    private String serverName = "";
+    public String getServerName() { return this.serverName; }
+    public void setServerName(String serverName) { this.serverName = serverName; this.changed(); }
 }

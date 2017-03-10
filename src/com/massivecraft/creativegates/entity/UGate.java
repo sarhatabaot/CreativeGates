@@ -209,7 +209,8 @@ public class UGate extends Entity<UGate> {
             player.teleport(randLoc.add(0.5, 0, 0.5));
             this.setUsedMillis(System.currentTimeMillis());
             this.fxKitUse(player);
-            String message = Txt.parse("<i>Teleporting to &drandom BerryCraft coordinates&e.");
+            String serverName = uconf.getServerName();
+            String message = Txt.parse("<i>Teleporting to random &d" + serverName + " &ecoordinates&e.");
             player.sendMessage(message);
             return true;
         } else {
