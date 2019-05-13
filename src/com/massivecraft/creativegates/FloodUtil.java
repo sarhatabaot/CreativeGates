@@ -91,9 +91,8 @@ public class FloodUtil
 	
 	public static Set<Block> expandedByOne(Set<Block> blocks, Set<BlockFace> expandFaces)
 	{
-		Set<Block> ret = new HashSet<>();
-		
-		ret.addAll(blocks);
+
+		Set<Block> ret = new HashSet<>(blocks);
 		
 		for (Block block : blocks)
 		{

@@ -73,13 +73,7 @@ public class CreativeGates extends MassivePlugin
 	
 		// Schedule a permission update.
 		// Possibly it will be useful due to the way Bukkit loads permissions.
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			@Override
-			public void run()
-			{
-				MConf.get().updatePerms();
-			}
-		});
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> MConf.get().updatePerms());
 	}
 	
 	@Override

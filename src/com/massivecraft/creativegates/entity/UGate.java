@@ -317,7 +317,6 @@ public class UGate extends Entity<UGate>
 		return true;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void setContent(Material material)
 	{
 		List<Block> blocks = this.getBlocks();
