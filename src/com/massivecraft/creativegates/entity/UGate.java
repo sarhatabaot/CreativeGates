@@ -353,7 +353,7 @@ public class UGate extends Entity<UGate>
 
 			BlockData data = block.getBlockData();
 			Orientable orientable = (Orientable) data;
-			orientable.setAxis(facingNorthSouth ? Axis.X : Axis.Y);
+			orientable.setAxis(facingNorthSouth ? Axis.X : Axis.Z);
 			block.setBlockData(orientable);
 		}
 	}
