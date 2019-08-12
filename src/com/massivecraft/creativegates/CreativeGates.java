@@ -11,10 +11,13 @@ import com.massivecraft.massivecore.Aspect;
 import com.massivecraft.massivecore.AspectColl;
 import com.massivecraft.massivecore.MassivePlugin;
 import com.massivecraft.massivecore.Multiverse;
+import net.milkbowl.vault.permission.Permission;
 import com.massivecraft.massivecore.command.type.RegistryType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.EnumSet;
@@ -44,10 +47,11 @@ public class CreativeGates extends MassivePlugin
 	private Aspect aspect;
 	public Aspect getAspect() { return this.aspect; }
 	public Multiverse getMultiverse() { return this.getAspect().getMultiverse(); }
-	
+	Permission permission = null;
+	private Player player;
 	// Index
 	private final IndexCombined index = new IndexCombined();
-	public IndexCombined getIndex() { return this.index; }
+	public IndexCombined getIndex() { return this.index; };
 	
 	// Filling
 	private boolean filling = false;
@@ -61,6 +65,7 @@ public class CreativeGates extends MassivePlugin
 	@Override
 	public void onEnableInner()
 	{
+		setupPermissions();
 		// Initialize Aspects
 		this.aspect = AspectColl.get().get(Const.ASPECT, true);
 		this.aspect.register();
@@ -120,5 +125,18 @@ public class CreativeGates extends MassivePlugin
 	{
 		return isVoid(block.getType());
 	}
-	
+	private boolean setupPermissions()
+	{
+		RegisteredServiceProvider<Permission> permissionProvider = getServer()
+		.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+		if (permissionProvider != null)
+		{
+			permission = permissionProvider.getProvider();
+		}
+		return (permission != null);
+	}
+	public String getPrimary(Player player)
+	{
+		return permission.getPrimaryGroup(player);
+	}
 }

@@ -20,6 +20,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import org.bukkit.World.Environment;
+import com.google.common.collect.Lists;	
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import java.util.TreeSet;
 
 public class UGate extends Entity<UGate>
 {
+	public List<String> damageDisabled = new ArrayList<>();
 	// -------------------------------------------- //
 	// META
 	// -------------------------------------------- //
@@ -37,6 +40,7 @@ public class UGate extends Entity<UGate>
 	{
 		return UGateColls.get().get2(oid);
 	}
+	UConf uconf = new UConf();
 	
 	// -------------------------------------------- //
 	// OVERRIDE: ENTITY
@@ -54,6 +58,7 @@ public class UGate extends Entity<UGate>
 		this.exitEnabled = that.exitEnabled;
 		this.exit = that.exit;
 		this.setCoordsNoChanged(that.coords);
+		this.setType(that.getType());
 		
 		return this;
 	}
@@ -162,6 +167,17 @@ public class UGate extends Entity<UGate>
 		this.setCoordsNoChanged(coords);
 	}
 	
+	private String portalType = "normal";
+	public String getType()
+	{
+		return this.portalType;
+	}
+	public void setType(String portalType)
+	{
+		this.portalType = portalType;
+		this.changed();
+	}
+	
 	// -------------------------------------------- //
 	// ASSORTED
 	// -------------------------------------------- //
@@ -217,32 +233,76 @@ public class UGate extends Entity<UGate>
 		
 		String message;
 		
-		for (UGate ugate : gateChain)
+		if (this.getType().equals("random"))
 		{
-			if ( ! ugate.isExitEnabled()) continue;
-			
-			PS destinationPs = ugate.getExit();
-			String destinationDesc = (MConf.get().teleportationMessageActive ? "the gate destination" : "");
-			Destination destination = new DestinationSimple(destinationPs, destinationDesc);
-			
-			try
+			if (randomTransport(player, uconf.getRandomRadius()))
 			{
-				MixinTeleport.get().teleport(player, destination, 0);
-				this.setUsedMillis(System.currentTimeMillis());
-				this.fxKitUse(player);
-				return;
-			}
-			catch (TeleporterException e)
-			{
-				message = e.getMessage();
-				MixinMessage.get().messageOne(player, message);
-			}
+				damageDisabled.remove(player.getName());
+			}				 
 		}
-		
-		message = Txt.parse("<i>This gate does not seem to lead anywhere.");
-		MixinMessage.get().messageOne(player, message);
+		else
+		{
+			for (UGate ugate : gateChain)
+			{
+				if ( ! ugate.isExitEnabled()) continue;
+				
+				PS destinationPs = ugate.getExit();
+				String destinationDesc = (MConf.get().teleportationMessageActive ? "the gate destination" : "");
+				Destination destination = new DestinationSimple(destinationPs, destinationDesc);
+				
+				try
+				{
+					MixinTeleport.get().teleport(player, destination, 0);
+					this.setUsedMillis(System.currentTimeMillis());
+					this.fxKitUse(player);
+					return;
+				}
+				catch (TeleporterException e)
+				{
+					message = e.getMessage();
+					MixinMessage.get().messageOne(player, message);
+				}
+			}
+			
+			message = Txt.parse("<i>This gate does not seem to lead anywhere.");
+			MixinMessage.get().messageOne(player, message);
+			
+		}
 	}
 	
+	public boolean randomTransport(Player player, double radius){
+		Block randBlock = getRandBlock(player, radius);
+
+		Block highest = randBlock.getWorld().getHighestBlockAt(randBlock.getLocation());
+		Location randLoc = highest.getLocation();
+		ArrayList<Material> dangerList = Lists.newArrayList(Material.LAVA, Material.CACTUS, 
+				Material.TNT, Material.WATER, Material.AIR, Material.BLACK_CARPET, Material.BLUE_CARPET, Material.BROWN_CARPET, 
+				Material.CYAN_CARPET, Material.GRAY_CARPET, Material.GREEN_CARPET, Material.LIGHT_BLUE_CARPET, Material.LIGHT_GRAY_CARPET,
+				Material.LIME_CARPET, Material.MAGENTA_CARPET, Material.ORANGE_CARPET, Material.PINK_CARPET, Material.PURPLE_CARPET, 
+				Material.RED_CARPET, Material.WHITE_CARPET, Material.YELLOW_CARPET, Material.LEGACY_CARPET, Material.LEGACY_STATIONARY_LAVA, Material.LEGACY_STATIONARY_WATER);
+		if(!dangerList.contains(highest.getRelative(BlockFace.DOWN).getType())) {
+			damageDisabled.add(player.getName());
+			player.teleport(randLoc.add(0.5, 0, 0.5));
+			this.setUsedMillis(System.currentTimeMillis());
+			this.fxKitUse(player);
+			String serverName = uconf.getServerName();
+			String message = Txt.parse("<i>Teleporting to random &d" + serverName + " &ecoordinates&e.");
+			player.sendMessage(message);
+			return true;
+		} else {
+			if (randomTransport(player, radius)) {
+				damageDisabled.remove(player.getName());
+			}
+		}
+		return false;
+	}
+	
+	public Block getRandBlock(Player player, double radius) {
+		double randomX = -radius +( Math.random() * (radius * 2));
+		double randomZ = -radius + ( Math.random() * (radius * 2));
+		Block randBlock = player.getWorld().getHighestBlockAt((int)randomX, (int)randomZ).getRelative(BlockFace.UP, 2);
+		return randBlock;
+	}
 	public List<UGate> getGateChain()
 	{
 		List<UGate> ret = new ArrayList<>();
@@ -318,7 +378,7 @@ public class UGate extends Entity<UGate>
 		byte data = 0;
 		
 		// Orientation check
-		if (material == Material.PORTAL)
+		if (material == Material.NETHER_PORTAL)
 		{
 			Block origin = blocks.get(0);
 			Block blockSouth = origin.getRelative(BlockFace.SOUTH);
@@ -334,12 +394,12 @@ public class UGate extends Entity<UGate>
 		{
 			Material blockMaterial = block.getType();
 			
-			if (blockMaterial != Material.PORTAL && blockMaterial != Material.STATIONARY_WATER && blockMaterial != Material.WATER && ! CreativeGates.isVoid(blockMaterial)) continue;
+			if (blockMaterial != Material.NETHER_PORTAL && blockMaterial != Material.WATER && ! CreativeGates.isVoid(blockMaterial)) continue;
 			
 			block.setType(material);
 			
 			// Apply orientation
-			if (material != Material.PORTAL) continue;
+			if (material != Material.NETHER_PORTAL) continue;
 			
 			block.setData(data);
 		}
@@ -348,9 +408,18 @@ public class UGate extends Entity<UGate>
 	public void fill()
 	{
 		UConf uconf = UConf.get(this.getExit());
-		CreativeGates.get().setFilling(true);
-		this.setContent(uconf.isUsingWater() ? Material.STATIONARY_WATER : Material.PORTAL);
-		CreativeGates.get().setFilling(false);
+		if ("random".equals(this.getType())){
+			CreativeGates.get().setFilling(true);
+			this.setContent(uconf.getMaterialRandom());
+			CreativeGates.get().setFilling(false);
+		} else {
+			CreativeGates.get().setFilling(true);
+			Environment env = this.getCenterBlock().getWorld().getEnvironment();
+			if (env == Environment.NETHER) {
+				this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL);
+			} else { this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL); }
+			CreativeGates.get().setFilling(false);
+   
 	}
 	
 	public void empty()

@@ -1,15 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Parent -->
-    <parent>
-        <groupId>com.massivecraft.massivesuper</groupId>
-        <artifactId>MassiveSuper</artifactId>
-        <version>2.14.1-SNAPSHOT</version>
-        <relativePath>../MassiveSuper</relativePath>
-    </parent>
-
     <!-- Basics -->
+    <version>2.14.1-SNAPSHOT</version>
     <groupId>com.massivecraft.creativegates</groupId>
     <artifactId>CreativeGates</artifactId>
     <packaging>jar</packaging>
@@ -25,16 +18,31 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>D:\BerryCraft\Plugin Development\Modules\spigot-1.14.jar</systemPath>
+            <!--<systemPath>D:\BerryCraft\Plugin Development\Modules\Paper-1.14.jar</systemPath>-->
         </dependency>
         <!-- MassiveCore -->
         <dependency>
             <groupId>com.massivecraft.massivecore</groupId>
             <artifactId>MassiveCore</artifactId>
+            <version>2.14.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>D:\BerryCraft\Plugin Development\Modules\MassiveCore.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.7.2</version>
+            <scope>system</scope>
+            <systemPath>D:\BerryCraft\Plugin Development\Modules\Vault.jar</systemPath>
         </dependency>
     </dependencies>
 
     <!-- Build -->
     <build>
+		<sourceDirectory>src</sourceDirectory>
         <!-- Resources -->
         <resources>
             <!-- Standard -->
@@ -52,5 +60,8 @@
             </resource>
         </resources>
     </build>
-    
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 </project>

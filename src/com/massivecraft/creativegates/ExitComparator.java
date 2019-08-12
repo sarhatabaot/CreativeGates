@@ -21,6 +21,10 @@ public class ExitComparator implements Comparator<UGate>
 	@Override
 	public int compare(UGate o1, UGate o2)
 	{
+		if (o1.getType().equals("random"))
+		{
+			return o1.getExit().compareTo(o1.getExit());
+		}
 		return o1.getExit().compareTo(o2.getExit());
 	}
 

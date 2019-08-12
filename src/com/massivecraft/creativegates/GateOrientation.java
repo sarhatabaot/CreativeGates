@@ -18,6 +18,7 @@ public enum GateOrientation
 	
 	NS(MUtil.set(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN)),
 	WE(MUtil.set(BlockFace.WEST, BlockFace.EAST, BlockFace.UP, BlockFace.DOWN)),
+	NEWS(MUtil.set(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)); // END OF LIST
 	
 	// END OF LIST
 	;
@@ -35,6 +36,7 @@ public enum GateOrientation
 	GateOrientation(Collection<BlockFace> expandFaces)
 	{
 		Set<BlockFace> expandFacesTemp = new MassiveSet<>(expandFaces);
+									   
 		this.expandFaces = Collections.unmodifiableSet(expandFacesTemp);
 	}
 	
