@@ -1,11 +1,8 @@
 package com.massivecraft.creativegates;
 
 import com.massivecraft.creativegates.entity.UGate;
-import com.massivecraft.massivecore.predicate.Predicate;
 
 import java.util.function.Predicate;
-
-									
 
 public class NetworkIdEqualsPredicate implements Predicate<UGate>
 {

@@ -57,11 +57,9 @@ public class FloodUtil
 
 	public static Entry<GateOrientation, Set<Block>> getGateFloodInfo2(Block startBlock)
 	{
-		UConf uconf = UConf.get(startBlock);
-
 		// Search for content WE and NS
 		GateOrientation gateOrientaion = null;
-		Set<Block> blocksNEWS = getFloodBlocks(startBlock, new HashSet<Block>(), GateOrientation.NEWS.expandFaces, uconf.getMaxarea());
+		Set<Block> blocksNEWS = getFloodBlocks(startBlock, new HashSet<Block>(), GateOrientation.NEWS.expandFaces, MConf.get().getMaxarea());
 		// Figure out dir and content... or throw no frame fail. 
 		Set<Block> blocks;
 		blocks = blocksNEWS;

@@ -3,13 +3,9 @@ package com.massivecraft.creativegates;
 
 import com.google.common.collect.Lists;
 import com.massivecraft.creativegates.entity.MConf;
-import com.massivecraft.creativegates.entity.UConf;
-import com.massivecraft.creativegates.entity.UConfColls;
 import com.massivecraft.creativegates.entity.UGate;
 import com.massivecraft.creativegates.entity.UGateColl;  
-import com.massivecraft.creativegates.entity.UGateColls;
 import com.massivecraft.massivecore.Engine;
-import com.massivecraft.massivecore.MassiveCore;
 import com.massivecraft.massivecore.mixin.MixinMessage;
 import com.massivecraft.massivecore.ps.PS;
 import com.massivecraft.massivecore.util.IdUtil;
@@ -200,7 +196,7 @@ public class EngineMain extends Engine
 		if ( ! isGateNearby(location.getBlock())) return;
 		
 		// ... and we are blocking zombie pigman portal spawn ...
-		if (UConf.get(location).isPigmanPortalSpawnAllowed()) return;
+		if (MConf.get().isPigmanPortalSpawnAllowed()) return;
 		
 		// ... then block the spawn event.
 		event.setCancelled(true);
@@ -287,11 +283,11 @@ public class EngineMain extends Engine
 		
 		// ... then transport the player.
 		if (ugate.getType().equals("random")) {
-			if (ugate.randomTransport(player, uconf.getRandomRadius()))
+			if (ugate.randomTransport(player, MConf.get().getRandomRadius()))
 			{
 				ugateClass.damageDisabled.remove(player);
 			} 
-			ugate.randomTransport(player, uconf.getRandomRadius());
+			ugate.randomTransport(player, MConf.get().getRandomRadius());
 		}
 		else
 		{
@@ -468,7 +464,7 @@ public class EngineMain extends Engine
 				return;
 			}
 
-			if (uconf.getLimitranks() == true)
+			if (MConf.get().getLimitranks() == true)
 			{
 				// Breaking and Editing for BerryCraft: checking how many gates one has to apply gates limit per rank
 				if (Perm.LIMITED.has(player, true))
@@ -485,21 +481,18 @@ public class EngineMain extends Engine
 					int amount = 0;
 					String playerid = event.getPlayer().getUniqueId().toString();
 
-					for (UGateColl coll : UGateColls.get().getColls())
+					for (UGate gate : UGateColl.get().getAll())
 					{
-						for (UGate gate : coll.getAll())
+						Integer count = player2count.get(playerid);
+						if (count == null) count = 0;
+						if (gate.getCreatorId().equals(playerid))
 						{
-							Integer count = player2count.get(playerid);
-							if (count == null) count = 0;
-							if (gate.getCreatorId().equals(playerid))
-							{
-								count++;
-								amount++;
-							}
-							player2count.put(playerid, count);
+							count++;
+							amount++;
 						}
+						player2count.put(playerid, count);
 					}
-					Map<String, Integer> LimitedRanks = uconf.getLimitedranks();
+					Map<String, Integer> LimitedRanks = MConf.get().getLimitedranks();
 					for (Entry<String, Integer> entry : LimitedRanks.entrySet())
 					{
 						String group = entry.getKey();
@@ -529,7 +522,7 @@ public class EngineMain extends Engine
 			}
 			
 			// ... create the gate ...
-			UGate newGate = UGateColl.get().get(startBlock).create();
+			UGate newGate = UGateColl.get().create();
 			newGate.setCreatorId(IdUtil.getId(player));
 			newGate.setNetworkId(newNetworkId);
 			newGate.setExit(exit);
@@ -580,7 +573,7 @@ public class EngineMain extends Engine
 				MixinMessage.get().messageOne(player, message);
 			}
 		}
-		else if(material == uconf.getItemRandom())
+		else if(material == MConf.get().getItemRandom())
 		{
 			// We are creating a special admin-only portal that creates a random teleport destination
 
@@ -624,7 +617,7 @@ public class EngineMain extends Engine
 				coords.add(PS.valueOf(block).withWorld(null));
 			}
 			// ... create the gate ...
-			UGate newGate = UGateColls.get().get(startBlock).create();
+			UGate newGate = UGateColl.get().create();
 			newGate.setCreatorId(IdUtil.getId(player));
 			newGate.setNetworkId(newNetworkId);
 			newGate.setExit(exit);

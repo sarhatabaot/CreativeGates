@@ -4,7 +4,6 @@ import com.massivecraft.creativegates.Perm;
 import com.massivecraft.creativegates.entity.MConf;
 import com.massivecraft.creativegates.entity.UGate;
 import com.massivecraft.creativegates.entity.UGateColl;
-import com.massivecraft.creativegates.entity.UGateColls;
 import com.massivecraft.massivecore.MassiveException;
 import com.massivecraft.massivecore.command.MassiveCommand;
 import com.massivecraft.massivecore.command.Parameter;

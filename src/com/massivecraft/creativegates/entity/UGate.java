@@ -47,7 +47,6 @@ public class UGate extends Entity<UGate>
 		if (id == null) return null;
 		return UGateColl.get().getFixed(id);
 	}
-	UConf uconf = new UConf();
 	
 	// -------------------------------------------- //
 	// OVERRIDE: ENTITY
@@ -242,7 +241,7 @@ public class UGate extends Entity<UGate>
 		
 		if (this.getType().equals("random"))
 		{
-			if (randomTransport(player, uconf.getRandomRadius()))
+			if (randomTransport(player, MConf.get().getRandomRadius()))
 			{
 				damageDisabled.remove(player.getName());
 			}				 
@@ -292,7 +291,7 @@ public class UGate extends Entity<UGate>
 			player.teleport(randLoc.add(0.5, 0, 0.5));
 			this.setUsedMillis(System.currentTimeMillis());
 			this.fxKitUse(player);
-			String serverName = uconf.getServerName();
+			String serverName = MConf.get().getServerName();
 			String message = Txt.parse("<i>Teleporting to random &d" + serverName + " &ecoordinates&e.");
 			player.sendMessage(message);
 			return true;
@@ -422,15 +421,16 @@ public class UGate extends Entity<UGate>
 		MConf mconf = MConf.get();
 		if ("random".equals(this.getType())){
 			CreativeGates.get().setFilling(true);
-			this.setContent(uconf.getMaterialRandom());
+			this.setContent(MConf.get().getMaterialRandom());
 			CreativeGates.get().setFilling(false);
 		} else {
 			CreativeGates.get().setFilling(true);
 			Environment env = this.getCenterBlock().getWorld().getEnvironment();
 			if (env == Environment.NETHER) {
-				this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL);
-			} else { this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL); }
+				this.setContent(MConf.get().isUsingWater() ? Material.WATER : Material.NETHER_PORTAL);
+			} else { this.setContent(MConf.get().isUsingWater() ? Material.WATER : Material.NETHER_PORTAL); }
 			CreativeGates.get().setFilling(false);
+		}
 	}
 	
 	public void empty()
