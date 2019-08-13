@@ -1,10 +1,11 @@
+
 package com.massivecraft.creativegates;
 
 import com.massivecraft.creativegates.cmd.CmdCg;
 import com.massivecraft.creativegates.cmd.type.TypePermissionDefault;
 import com.massivecraft.creativegates.entity.MConf;
 import com.massivecraft.creativegates.entity.MConfColl;
-import com.massivecraft.creativegates.entity.UConfColls;
+import com.massivecraft.creativegates.entity.UConfColl;
 import com.massivecraft.creativegates.entity.UGateColls;
 import com.massivecraft.creativegates.index.IndexCombined;
 import com.massivecraft.massivecore.Aspect;
@@ -13,6 +14,8 @@ import com.massivecraft.massivecore.MassivePlugin;
 import com.massivecraft.massivecore.Multiverse;
 import net.milkbowl.vault.permission.Permission;
 import com.massivecraft.massivecore.command.type.RegistryType;
+																				   
+import com.massivecraft.massivecore.command.type.enumeration.TypePermissionDefault;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,18 +40,26 @@ public class CreativeGates extends MassivePlugin
 	
 	private static CreativeGates i;
 	public static CreativeGates get() { return i; }
-	public CreativeGates() { CreativeGates.i = this; }
+	public CreativeGates()
+	{
+		CreativeGates.i = this;
+		this.setVersionSynchronized(false);
+	}
+  
+						 
+									 
+  
 	
 	// -------------------------------------------- //
 	// FIELDS
 	// -------------------------------------------- //
 	
-	// Aspects
+	/*// Aspects
 	private Aspect aspect;
 	public Aspect getAspect() { return this.aspect; }
 	public Multiverse getMultiverse() { return this.getAspect().getMultiverse(); }
 	Permission permission = null;
-	private Player player;
+	private Player player;*/
 	// Index
 	private final IndexCombined index = new IndexCombined();
 	public IndexCombined getIndex() { return this.index; };
@@ -66,13 +77,13 @@ public class CreativeGates extends MassivePlugin
 	public void onEnableInner()
 	{
 		setupPermissions();
-		// Initialize Aspects
+		/*// Initialize Aspects
 		this.aspect = AspectColl.get().get(Const.ASPECT, true);
 		this.aspect.register();
 		this.aspect.setDesc(
 			"<i>What gates do exist.",
 			"<i>What the config options are set to."
-		);
+		);*/
 
 		// Index
 		this.getIndex().clear();
@@ -85,7 +96,7 @@ public class CreativeGates extends MassivePlugin
 			// Coll
 			MConfColl.class,
 			UConfColls.class,
-			UGateColls.class,
+			UGateColl.class,
 		
 			// Engine
 			EngineMain.class,
@@ -96,13 +107,14 @@ public class CreativeGates extends MassivePlugin
 	
 		// Schedule a permission update.
 		// Possibly it will be useful due to the way Bukkit loads permissions.
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> MConf.get().updatePerms());
+		/*Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run()
 			{
 				MConf.get().updatePerms();
 			}
-		});
+		});*/
 	}
 	
 	@Override

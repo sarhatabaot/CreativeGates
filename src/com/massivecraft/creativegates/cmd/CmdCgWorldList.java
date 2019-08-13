@@ -56,18 +56,16 @@ public class CmdCgWorldList extends MassiveCommand
 		// count the gates
 		Map<String, Integer> world2count = new HashMap<>();
 		int countAll = 0;
-		for (UGateColl coll : UGateColls.get().getColls())
+		for (UGate gate : UGateColl.get().getAll())
 		{
-			for (UGate gate : coll.getAll())
-			{
-				String world = gate.getExit().getWorld();
-				Integer count = world2count.get(world);
-				if (count == null) count = 0;
-				count++;
-				countAll++;
-				world2count.put(world, count);
-			}
+			String world = gate.getExit().getWorld();
+			Integer count = world2count.get(world);
+			if (count == null) count = 0;
+			count++;
+			countAll++;
+			world2count.put(world, count);
 		}
+
 		
 		// convert to lines
 		for (Entry<String, Integer> entry : MUtil.entriesSortedByValues(world2count, false))

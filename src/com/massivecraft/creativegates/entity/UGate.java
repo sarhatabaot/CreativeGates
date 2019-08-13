@@ -11,12 +11,15 @@ import com.massivecraft.massivecore.teleport.DestinationSimple;
 import com.massivecraft.massivecore.util.IdUtil;
 import com.massivecraft.massivecore.util.SmokeUtil;
 import com.massivecraft.massivecore.util.Txt;
+import org.bukkit.Axis;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,7 +41,11 @@ public class UGate extends Entity<UGate>
 	
 	public static UGate get(Object oid)
 	{
-		return UGateColls.get().get2(oid);
+		if (oid == null) throw new NullPointerException("oid");
+
+		String id = UGateColl.get().fixId(oid);
+		if (id == null) return null;
+		return UGateColl.get().getFixed(id);
 	}
 	UConf uconf = new UConf();
 	
@@ -370,12 +377,11 @@ public class UGate extends Entity<UGate>
 		return true;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void setContent(Material material)
 	{
 		List<Block> blocks = this.getBlocks();
 		if (blocks == null) return;
-		byte data = 0;
+		boolean facingNorthSouth = true;
 		
 		// Orientation check
 		if (material == Material.NETHER_PORTAL)
@@ -383,10 +389,14 @@ public class UGate extends Entity<UGate>
 			Block origin = blocks.get(0);
 			Block blockSouth = origin.getRelative(BlockFace.SOUTH);
 			Block blockNorth = origin.getRelative(BlockFace.NORTH);
-			
+
 			if (blocks.contains(blockNorth) || blocks.contains(blockSouth))
 			{
-				data = 2;
+				facingNorthSouth = false;
+			}
+			else
+			{
+				facingNorthSouth = true;
 			}
 		}
 		
@@ -400,14 +410,16 @@ public class UGate extends Entity<UGate>
 			
 			// Apply orientation
 			if (material != Material.NETHER_PORTAL) continue;
-			
-			block.setData(data);
+			BlockData data = block.getBlockData();
+			Orientable orientable = (Orientable) data;
+			orientable.setAxis(facingNorthSouth ? Axis.X : Axis.Z);
+			block.setBlockData(orientable);
 		}
 	}
 	
 	public void fill()
 	{
-		UConf uconf = UConf.get(this.getExit());
+		MConf mconf = MConf.get();
 		if ("random".equals(this.getType())){
 			CreativeGates.get().setFilling(true);
 			this.setContent(uconf.getMaterialRandom());
@@ -419,7 +431,6 @@ public class UGate extends Entity<UGate>
 				this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL);
 			} else { this.setContent(uconf.isUsingWater() ? Material.WATER : Material.NETHER_PORTAL); }
 			CreativeGates.get().setFilling(false);
-   
 	}
 	
 	public void empty()
