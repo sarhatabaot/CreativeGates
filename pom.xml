@@ -3,10 +3,9 @@
 
     <!-- Parent -->
     <parent>
-        <groupId>com.massivecraft.massivesuper</groupId>
+        <groupId>com.github.sarhatabaot</groupId>
         <artifactId>MassiveSuper</artifactId>
-        <version>3.2.3</version>
-        <relativePath>../MassiveSuper</relativePath>
+        <version>3.2.5</version>
     </parent>
 
     <!-- Basics -->
@@ -19,30 +18,31 @@
     <description>${massiveColorInfo}${project.name} is a portal plugin. ${massiveDescriptionSuffix}</description>
     <url>${massiveBaseUrl}/creativegates</url>
 
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <!-- Dependencies -->
     <dependencies>
-        <!-- Spigot -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>D:\BerryCraft\Plugin Development\Modules\Paper-latest.jar</systemPath>
         </dependency>
-        <!-- MassiveCore -->
+        <!-- Vault -->
         <dependency>
-            <groupId>com.massivecraft.massivecore</groupId>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sarhatabaot</groupId>
             <artifactId>MassiveCore</artifactId>
-            <version>3.2.3-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>D:\BerryCraft\Plugin Development\Modules\MassiveCore.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.7.2</version>
-            <scope>system</scope>
-            <systemPath>D:\BerryCraft\Plugin Development\Modules\Vault.jar</systemPath>
+            <version>3.2.5</version>
         </dependency>
     </dependencies>
 
@@ -52,16 +52,8 @@
         <resources>
             <!-- Standard -->
             <resource>
-                <directory>${project.basedir}</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>*.yml</include>
-                </includes>
-            </resource>
-            <!-- OpenSource -->
-            <resource>
-                <directory>${project.build.sourceDirectory}</directory>
-                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
