@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <!-- Info -->
-    <name>${project.artifactId}</name>
+    <name>${project.artifactId}-${project.version}</name>
     <description>${massiveColorInfo}${project.name} is a portal plugin. ${massiveDescriptionSuffix}</description>
     <url>${massiveBaseUrl}/creativegates</url>
 
@@ -43,6 +43,17 @@
             <groupId>com.github.sarhatabaot</groupId>
             <artifactId>MassiveCore</artifactId>
             <version>3.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>19.0.0</version>
         </dependency>
     </dependencies>
 
